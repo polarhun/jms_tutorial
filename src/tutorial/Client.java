@@ -9,12 +9,34 @@ import javax.jms.*;
 
 public class Client {
     public static void main(String[] args) throws Exception {
+        Connection connection = null;
         EmbeddedBroker broker = new EmbeddedBroker();
         broker.start();
 //        Create and start connection to broker
         String url = "tcp://localhost:61616";
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
-        Connection connection = connectionFactory.createConnection("guest", "password");
+        try {
+            connection = connectionFactory.createConnection("wrong", "wrong");
+            connection.start();
+        } catch (JMSSecurityException e) {
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+        }
+
+        try {
+            connection = connectionFactory.createConnection("guest", "password");
+            connection.start();
+            WriteTo(connection, "TUTORIAL.PRESENTER");
+        } catch (JMSSecurityException e) {
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+        }
+
+        connection = connectionFactory.createConnection("user", "password");
         connection.start();
 
         WriteTo(connection, "TUTORIAL.PRESENTER");
@@ -30,9 +52,9 @@ public class Client {
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
         MessageConsumer consumer = session.createConsumer(destination);
-        while(true) {
+        while (true) {
             System.out.println("Waiting for message.");
-            ActiveMQTextMessage message = (ActiveMQTextMessage)consumer.receive(5000);
+            ActiveMQTextMessage message = (ActiveMQTextMessage) consumer.receive(5000);
             if (message == null) {
                 break;
             }
