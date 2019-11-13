@@ -14,7 +14,7 @@ public class Client {
 //        Create and start connection to broker
         String url = "tcp://localhost:61616";
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
-        Connection connection = connectionFactory.createConnection("user", "password");
+        Connection connection = connectionFactory.createConnection("guest", "password");
         connection.start();
 
         WriteTo(connection, "TUTORIAL.PRESENTER");
