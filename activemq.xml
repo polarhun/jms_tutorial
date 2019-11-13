@@ -128,7 +128,26 @@
         <shutdownHooks>
             <bean xmlns="http://www.springframework.org/schema/beans" class="org.apache.activemq.hooks.SpringContextHook" />
         </shutdownHooks>
-
+        
+        <plugins>
+            <simpleAuthenticationPlugin>
+                <users>
+                    <authenticationUser username="system" password="manager" groups="admins"/>
+                    <authenticationUser username="user" password="password" groups="users"/>
+                    <authenticationUser username="guest" password="password" groups="guests"/>
+                </users>
+            </simpleAuthenticationPlugin>
+            <authorizationPlugin>
+                <map>
+                    <authorizationMap>
+                        <authorizationEntries>
+                            <authorizationEntry queue="TUTORIAL.<" read="users" write="users" admin="admins"/>
+                            <authorizationEntry topic="ActiveMQ.Advisory.>" read="*" write="*" admin="*"/>
+                        </authorizationEntries>
+                    </authorizationMap>
+                </map>
+            </authorizationPlugin> 
+        </plugins> 
     </broker>
 
     <!--
